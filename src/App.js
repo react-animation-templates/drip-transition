@@ -6,8 +6,10 @@ import { animated, to, useSpring } from '@react-spring/web'
 
 function BeierCurve(props) {
   const numberofdrops = 15;
-  const dropheight = 300;
-  const randomnessaddition = 200;
+  const dropheight = window.innerHeight + 500;
+  const topdropheight = window.innerHeight
+  const randomnessaddition = 1000;
+  const toprandomnessaddition = 300;
 
 
   function generateDrops(n) {
@@ -19,7 +21,7 @@ function BeierCurve(props) {
       drops.topctrl.push([(i)*100-100, 0], [(i)*100+0, 0])
       const random = Math.floor(Math.random() * randomnessaddition)
       drops.randomness.push(random, random);
-      const randomtop = Math.floor(Math.random() * 200)
+      const randomtop = Math.floor(Math.random() * toprandomnessaddition)
 
       drops.randomnesstop.push(randomtop, randomtop);
     }
@@ -28,7 +30,7 @@ function BeierCurve(props) {
   const drops = generateDrops(numberofdrops+1);
   const topendcoords_p1 = drops.topend;
   const topendcoords_p2 = topendcoords_p1.map((coord, i, arr) => {
-    return [coord[0], coord[1] + (i+1 == arr.length ? 0 : drops.randomnesstop[((i+1)*2)])  ]
+    return [coord[0], coord[1] + (i+1 == arr.length ? 0 : topdropheight + drops.randomnesstop[((i+1)*2)])  ]
   });
   
   const bottomendcoords_p1 = drops.bottomend;
@@ -43,23 +45,23 @@ function BeierCurve(props) {
 
   const topctrl_p1 = drops.topctrl;
   const topctrl_p2 = topctrl_p1.map((coord, i) => {
-    if (i==0 ) { return [coord[0], coord[1] + drops.randomnesstop[(i)]] }
+    if (i==0 ) { return [coord[0], coord[1] + topdropheight + drops.randomnesstop[(i)]] }
     if ((i+1) % 2 == 0) {
-      return [coord[0], coord[1] + drops.randomnesstop[(i-1)]]
+      return [coord[0], coord[1] + topdropheight + drops.randomnesstop[(i-1)]]
     }
     else if ((i+1) % 2 == 1) {
-      return [coord[0], coord[1] + drops.randomnesstop[(i+1)]]
+      return [coord[0], coord[1] + topdropheight +  drops.randomnesstop[(i+1)]]
     }
     
   });
 
   
 
-  const start_cp = [50, 0];
+  const start_cp = [0, 0];
   
   function generatePath(n, point) {
     //type is a bool. generate p1 if false, p2 if true
-    const end_cp = [n*100-50, 0];
+    const end_cp = [n*100, 0];
     let pathstring = "M 0,0 \n";
     console.log(topctrl_p2)
     for (let i = 0; i < n; i++) {
@@ -110,7 +112,7 @@ function BeierCurve(props) {
     <svg
       width={window.innerWidth}
       height={window.innerHeight}
-      style={{ width: "100vw", height: "100vh", backgroundColor: "grey" }}>
+      style={{ width: "100vw", height: "100vh", backgroundColor: "white" }}>
         <animated.path
         
           d={x.to({
@@ -134,9 +136,9 @@ function App() {
     to: {x: 100},
     loop: true,
     config: {
-      mass: 1,
-      friction: 20,
-      tension: 50,
+      mass: 10,
+      friction: 220,
+      tension: 80,
     },
   }));
 
