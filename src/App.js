@@ -1,10 +1,8 @@
 import './App.css';
-import { animated, to, useSpring } from '@react-spring/web'
-
-
-
+import { animated, useSpring } from '@react-spring/web'
 
 function BeierCurve(props) {
+  //SET VARIABLES HERE
   const numberofdrops = 15;
   const dropheight = window.innerHeight + 500;
   const topdropheight = window.innerHeight
@@ -22,7 +20,6 @@ function BeierCurve(props) {
       const random = Math.floor(Math.random() * randomnessaddition)
       drops.randomness.push(random, random);
       const randomtop = Math.floor(Math.random() * toprandomnessaddition)
-
       drops.randomnesstop.push(randomtop, randomtop);
     }
     return drops
@@ -30,7 +27,7 @@ function BeierCurve(props) {
   const drops = generateDrops(numberofdrops+1);
   const topendcoords_p1 = drops.topend;
   const topendcoords_p2 = topendcoords_p1.map((coord, i, arr) => {
-    return [coord[0], coord[1] + (i+1 == arr.length ? 0 : topdropheight + drops.randomnesstop[((i+1)*2)])  ]
+    return [coord[0], coord[1] + (i+1 === arr.length ? 0 : topdropheight + drops.randomnesstop[((i+1)*2)])  ]
   });
   
   const bottomendcoords_p1 = drops.bottomend;
@@ -45,13 +42,14 @@ function BeierCurve(props) {
 
   const topctrl_p1 = drops.topctrl;
   const topctrl_p2 = topctrl_p1.map((coord, i) => {
-    if (i==0 ) { return [coord[0], coord[1] + topdropheight + drops.randomnesstop[(i)]] }
-    if ((i+1) % 2 == 0) {
+    if (i===0 ) { return [coord[0], coord[1] + topdropheight + drops.randomnesstop[(i)]] }
+    if ((i+1) % 2 === 0) {
       return [coord[0], coord[1] + topdropheight + drops.randomnesstop[(i-1)]]
     }
-    else if ((i+1) % 2 == 1) {
+    else if ((i+1) % 2 === 1) {
       return [coord[0], coord[1] + topdropheight +  drops.randomnesstop[(i+1)]]
     }
+    else return null;
     
   });
 
@@ -65,50 +63,27 @@ function BeierCurve(props) {
     let pathstring = "M 0,0 \n";
     console.log(topctrl_p2)
     for (let i = 0; i < n; i++) {
-      if (point == "p1") {
+      if (point === "p1") {
         pathstring += `C ${i===0 ? start_cp : topctrl_p1[i*2+1]} ${bottomctrl_p1[i*2]} ${bottomendcoords_p1[i]} \n`
         pathstring += `C ${bottomctrl_p1[i*2+1]} ${i+1===n ? end_cp : topctrl_p1[i*2]} ${topendcoords_p1[i]} \n`
-      } else if (point == "p2") {
+      } else if (point === "p2") {
         pathstring += `C ${i===0 ? start_cp : topctrl_p2[i*2+1]} ${bottomctrl_p2[i*2]} ${bottomendcoords_p2[i]} \n`
         pathstring += `C ${bottomctrl_p2[i*2+1]} ${i+1===n ? end_cp : topctrl_p2[i*2]} ${topendcoords_p2[i]} \n`
       }
     }
     return pathstring
   }
-
-
-
-  //console.log(topctrl_p1)
-
-  const old_p1 = `
-  M 0,0 
-  C 50,0             ${bottomctrl_p1[0]} ${bottomendcoords_p1[0]}
-  C ${bottomctrl_p1[1]} ${topctrl_p1[0]} ${topendcoords_p1[0]}
-  C ${topctrl_p1[1]} ${bottomctrl_p1[2]} ${bottomendcoords_p1[1]}
-  C ${bottomctrl_p1[3]} ${topctrl_p1[2]} ${topendcoords_p1[1]}
-  C ${topctrl_p1[3]} ${bottomctrl_p1[4]} ${bottomendcoords_p1[2]}
-  C ${bottomctrl_p1[5]} ${topctrl_p1[4]} ${topendcoords_p1[2]}
-  
-  `
   const p1 = generatePath(numberofdrops, "p1")
-  //console.log(p1)
-  const old_p2 = `
-  M 0,0 
-  C 50,0                ${bottomctrl_p2[0]} ${bottomendcoords_p2[0]}
-  C ${bottomctrl_p2[1]} ${topctrl_p2[0]} ${topendcoords_p2[0]}
-  C ${topctrl_p2[1]} ${bottomctrl_p2[2]} ${bottomendcoords_p2[1]}
-  C ${bottomctrl_p2[3]} ${topctrl_p2[2]} ${topendcoords_p2[1]}
-  C ${topctrl_p2[3]} ${bottomctrl_p2[4]} ${bottomendcoords_p2[2]}
-  C ${bottomctrl_p2[5]} ${topctrl_p2[4]} ${topendcoords_p2[2]}
-
-  `
-  
   const p2 = generatePath(numberofdrops, "p2");
-  console.log(p2)
-
-
   let x = props.x;
+  let opacity = props.opacity;
   return(
+    <>
+    <div style={{display: "flex", flexDirection: "column", position: "fixed", width: "100vw", height: "50vh", alignItems: "center", top: "10vh", justifyContent: "center", fontFamily:"sans-serif", fontSize: "2em", mixBlendMode: "overlay"}}>
+      <animated.h1 style={{opacity: opacity, }} >Dynamic React Drip Transition</animated.h1>
+      <h3 style={{width: "80vw"}}>Fully dynamic and customisable drip transition using vanilla SVG & react-spring</h3>
+      <h5>made with ❤️ by @mazzz</h5>
+    </div>
     <svg
       width={window.innerWidth}
       height={window.innerHeight}
@@ -124,6 +99,7 @@ function BeierCurve(props) {
           strokeWidth={1}
         />
     </svg>
+    </>
   );
 }
 
@@ -131,9 +107,9 @@ function BeierCurve(props) {
 
 function App() {
   
-  const [{ x }, set] = useSpring(() => ({
-    from: {x: 0},
-    to: {x: 100},
+  const [{ x, opacity }] = useSpring(() => ({
+    from: {x: 0, opacity: 0},
+    to: {x: 100, opacity: 1},
     loop: true,
     config: {
       mass: 10,
@@ -144,7 +120,7 @@ function App() {
 
   return (
     <div className="App">
-      <BeierCurve x={x} />
+      <BeierCurve x={x} opacity={opacity} />
     </div>
   );
 }
